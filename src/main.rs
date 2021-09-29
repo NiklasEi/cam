@@ -1,5 +1,6 @@
-use std::io;
+use std::io::Error;
 use std::time::SystemTime;
+use std::{env, io};
 use v4l::buffer::Type;
 use v4l::io::mmap::Stream;
 use v4l::io::traits::CaptureStream;
@@ -8,6 +9,12 @@ use v4l::FourCC;
 use v4l::{context, Device};
 
 fn main() -> io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+    if args.len() != 2 {
+        panic!("You need to pass me a directory to save the images in!")
+    }
+    let directory = &args[1];
+
     let devices = context::enum_devices();
 
     for dev in devices {
@@ -38,6 +45,8 @@ fn main() -> io::Result<()> {
 
     let start = SystemTime::now();
     let mut img_buffer = image::load_from_memory(buf).unwrap();
-    img_buffer.save(format!("{:?}.png", start)).unwrap();
+    img_buffer
+        .save(format!("{}/{:?}.png", directory, start))
+        .unwrap();
     Ok(())
 }
