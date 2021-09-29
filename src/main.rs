@@ -1,4 +1,4 @@
-use std::fs::create_dir;
+use std::fs::create_dir_all;
 use std::time::SystemTime;
 use std::{env, io};
 use v4l::buffer::Type;
@@ -32,7 +32,7 @@ fn main() -> io::Result<()> {
     let params = dev.params()?;
     println!("Active parameters:\n{}", params);
 
-    create_dir(format!("{}", directory))?;
+    create_dir_all(format!("output/{}/", directory))?;
 
     let mut stream = Stream::with_buffers(&mut dev, Type::VideoCapture, 1)
         .expect("Failed to create buffer stream");
@@ -48,7 +48,7 @@ fn main() -> io::Result<()> {
     let start = SystemTime::now();
     let img_buffer = image::load_from_memory(buf).unwrap();
     img_buffer
-        .save(format!("/{}/{:?}.png", directory, start))
+        .save(format!("output/{}/{:?}.png", directory, start))
         .unwrap();
     Ok(())
 }
