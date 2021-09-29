@@ -48,7 +48,7 @@ fn main() -> io::Result<()> {
     let start = SystemTime::now();
     let img_buffer = image::load_from_memory(buf).unwrap();
     img_buffer
-        .save(format!("{}/{:?}.png", directory, start))
+        .save(format!("/{}/{:?}.png", directory, start))
         .unwrap();
     Ok(())
 }
