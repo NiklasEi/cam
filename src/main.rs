@@ -1,5 +1,5 @@
 use std::fs::create_dir_all;
-use std::time::SystemTime;
+use std::time::{SystemTime, UNIX_EPOCH};
 use std::{env, io};
 use v4l::buffer::Type;
 use v4l::io::mmap::Stream;
@@ -45,10 +45,13 @@ fn main() -> io::Result<()> {
         meta.timestamp
     );
 
-    let start = SystemTime::now();
+    let time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis();
     let img_buffer = image::load_from_memory(buf).unwrap();
     img_buffer
-        .save(format!("output/{}/{:?}.png", directory, start))
+        .save(format!("output/{}/{}.png", directory, time))
         .unwrap();
     Ok(())
 }
